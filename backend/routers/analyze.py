@@ -6,7 +6,7 @@ import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from backend.services import gemini
+from backend.services import groq
 from backend.services.context import ContextBuffer
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ async def analyze_text(body: AnalyzeRequest) -> AnalyzeResponse:
     _rest_buffer.add_final(body.text)
     context = _rest_buffer.get_context()
 
-    result = await gemini.analyze(body.text, context)
+    result = await groq.analyze(body.text, context)
     if result is None:
         raise HTTPException(status_code=503, detail="LLM service temporarily unavailable")
 

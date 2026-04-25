@@ -13,6 +13,7 @@ GROQ_MODEL: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 # ── Twilio ────────────────────────────────────────────────────────────────────
 TWILIO_ACCOUNT_SID: str = os.getenv("TWILIO_ACCOUNT_SID", "")
 TWILIO_AUTH_TOKEN: str = os.getenv("TWILIO_AUTH_TOKEN", "")
+AGENT_PHONE_NUMBER: str = os.getenv("AGENT_PHONE_NUMBER", "+10000000000")
 
 # ── App ───────────────────────────────────────────────────────────────────────
 HOST: str = os.getenv("HOST", "0.0.0.0")

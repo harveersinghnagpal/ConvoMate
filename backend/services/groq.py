@@ -87,6 +87,9 @@ def _fallback_analysis(latest_text: str) -> dict:
 
 
 async def analyze(latest_text: str, context: str, retries: int = 3) -> Optional[dict]:
+    if not latest_text or not latest_text.strip():
+        return None
+
     if not client:
         await asyncio.sleep(1)
         return _fallback_analysis(latest_text)

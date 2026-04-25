@@ -9,17 +9,17 @@ import websockets
 from backend.config import DEEPGRAM_API_KEY
 
 logger = logging.getLogger(__name__)
-
 DEEPGRAM_WS_URL = (
     "wss://api.deepgram.com/v1/listen"
     "?encoding=mulaw"
     "&sample_rate=8000"
     "&channels=1"
     "&model=nova-2"
-    "&smart_format=true"
     "&interim_results=true"
-    "&utterance_end_ms=1000"
+    "&smart_format=true"
 )
+
+print("DEEPGRAM KEY:", DEEPGRAM_API_KEY[:10])
 
 TranscriptCallback = Callable[[str, bool], Awaitable[None]]
 
@@ -73,6 +73,7 @@ class DeepgramStreamer:
         try:
             raw = base64.b64decode(b64_str)
             await self.send_audio(raw)
+            print("Sending audio to Deepgram")
         except Exception as exc:
             logger.warning("Base64 decode error: %s", exc)
 
@@ -106,6 +107,7 @@ class DeepgramStreamer:
     async def _handle_message(self, message: str) -> None:
         try:
             data = json.loads(message)
+            print("DEEPGRAM MESSAGE:", data)
         except json.JSONDecodeError:
             return
 
@@ -115,7 +117,7 @@ class DeepgramStreamer:
             channel = data.get("channel", {})
             alternatives = channel.get("alternatives", [{}])
             transcript = alternatives[0].get("transcript", "").strip()
-            is_final = data.get("is_final", False)
+            is_final = data.get("is_final", False) or data.get("speech_final", False)
 
             if transcript:
                 await self._on_transcript(transcript, is_final)

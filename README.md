@@ -76,7 +76,7 @@ ConvoMate/
 │   └── services/
 │       ├── context.py
 │       ├── deepgram.py
-│       └── gemini.py
+│       └── groq.py
 ├── frontend/
 │   ├── app.js
 │   ├── index.html
@@ -84,8 +84,6 @@ ConvoMate/
 ├── render.yaml
 └── README.md
 ```
-
-Note: `backend/services/gemini.py` currently contains the Groq-based analyzer logic. The filename is historical.
 
 ## Environment Variables
 
@@ -97,6 +95,7 @@ Required:
 - `GROQ_API_KEY`
 - `TWILIO_ACCOUNT_SID`
 - `TWILIO_AUTH_TOKEN`
+- `AGENT_PHONE_NUMBER`
 - `PUBLIC_URL`
 
 Optional:
@@ -356,7 +355,7 @@ https://your-render-url/twiml
 ## Suggested Next Steps
 
 1. Add speaker diarization or channel separation.
-2. Rename `backend/services/gemini.py` to something neutral like `analyzer.py`.
+2. Add robust speaker separation or diarization.
 3. Add persisted call logs and evaluation history.
 4. Add an automated test suite around `/analyze`.
 5. Implement a proper Twilio bridged call flow for agent/customer testing.
