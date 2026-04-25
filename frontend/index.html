@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConvoMate — Real-Time Call Monitoring & Agent Assist</title>
+  <meta name="description" content="AI-powered real-time call monitoring dashboard that detects sentiment, escalation, and delivers live agent coaching suggestions." />
+
+  <!-- Preconnect for Google Fonts performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Favicon emoji fallback -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════ -->
+<header class="header" role="banner">
+  <div class="header-brand">
+    <div class="brand-icon" aria-hidden="true">🎙️</div>
+    <div>
+      <div class="brand-name">ConvoMate</div>
+      <div class="brand-tag">Agent Assist · MVP</div>
+    </div>
+  </div>
+
+  <div class="header-controls">
+    <div class="status-pill" id="status-pill" role="status" aria-live="polite">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">No Active Call</span>
+    </div>
+    <a href="http://localhost:8000/docs" target="_blank" rel="noopener" class="btn btn-ghost" id="btn-api-docs">
+      API Docs ↗
+    </a>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════
+     MAIN DASHBOARD
+══════════════════════════════════════════════════ -->
+<main class="main-layout" id="main-layout" role="main">
+
+  <!-- ── Escalation banner (hidden by default) ── -->
+  <div class="escalation-banner hidden" id="escalation-banner" role="alert" aria-live="assertive">
+    <span class="escalation-banner-icon">🚨</span>
+    <span><strong>Escalation Detected</strong> — Caller is showing signs of high frustration. Immediate de-escalation recommended.</span>
+  </div>
+
+  <!-- ── Metric cards row ── -->
+  <section class="metrics-row" aria-label="Live Call Metrics">
+
+    <div class="metric-card" id="card-sentiment">
+      <div class="metric-icon" id="metric-sentiment-icon" aria-hidden="true">😐</div>
+      <div class="metric-details">
+        <div class="metric-label">Caller Sentiment</div>
+        <div class="metric-value" id="metric-sentiment-value">Neutral</div>
+      </div>
+    </div>
+
+    <div class="metric-card" id="card-escalation">
+      <div class="metric-icon" id="metric-escalation-icon" aria-hidden="true">✅</div>
+      <div class="metric-details">
+        <div class="metric-label">Escalation Risk</div>
+        <div class="metric-value" id="metric-escalation-value">No</div>
+      </div>
+    </div>
+
+    <div class="metric-card" id="card-duration">
+      <div class="metric-icon" aria-hidden="true">⏱️</div>
+      <div class="metric-details">
+        <div class="metric-label">Call Duration</div>
+        <div class="metric-value" id="metric-duration-value">00:00</div>
+      </div>
+    </div>
+
+    <div class="metric-card" id="card-segments">
+      <div class="metric-icon" aria-hidden="true">💬</div>
+      <div class="metric-details">
+        <div class="metric-label">Transcript Segments</div>
+        <div class="metric-value" id="metric-segments-value">0</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── Live Transcript ── -->
+  <section class="glass-card transcript-panel" aria-label="Live Transcript">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-title-icon">📝</span>
+        Live Transcript
+      </div>
+      <div class="ai-badge" id="suggestion-badge">
+        🔴 LIVE
+      </div>
+    </div>
+
+    <div class="transcript-body" id="transcript-body" role="log" aria-live="polite" aria-label="Transcript feed">
+      <!-- Empty state shown before any call -->
+      <div class="transcript-empty" id="transcript-empty">
+        <div class="transcript-empty-icon">🎙️</div>
+        <div class="transcript-empty-text">No call in progress</div>
+        <div class="transcript-empty-sub">Click "Simulate Call" below to start a demo</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Right sidebar ── -->
+  <aside class="sidebar" aria-label="Agent Assist Sidebar">
+
+    <!-- Agent Suggestion Card -->
+    <section class="glass-card suggestion-card" aria-label="AI Agent Suggestion">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-title-icon">🤖</span>
+          Agent Coaching
+        </div>
+        <span class="ai-badge">✨ Gemini AI</span>
+      </div>
+      <div class="suggestion-body">
+        <p class="suggestion-text" id="suggestion-text">
+          <span class="suggestion-placeholder">Waiting for caller input…</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Demo / Simulate Card -->
+    <section class="glass-card demo-card" aria-label="Demo Controls">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-title-icon">🧪</span>
+          Simulate Call
+        </div>
+      </div>
+      <div class="demo-body">
+        <p class="demo-desc">
+          Run a scripted 9-turn support call to see the full pipeline — transcript, sentiment, escalation, and AI coaching — without needing Twilio.
+        </p>
+
+        <div class="demo-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          <div class="demo-progress-bar" id="demo-progress-bar"></div>
+        </div>
+        <div class="demo-desc" id="demo-status" style="font-weight:500;">Ready</div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;" id="demo-btn-row">
+          <button class="btn btn-primary" id="btn-sim-start" aria-label="Start call simulation">
+            ▶ Start Simulation
+          </button>
+          <button class="btn btn-danger" id="btn-sim-stop" aria-label="Stop simulation" disabled>
+            ⏹ Stop
+          </button>
+          <button class="btn btn-ghost" id="btn-sim-reset" aria-label="Reset dashboard">
+            ↺ Reset
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analysis History -->
+    <section class="glass-card history-card" aria-label="Analysis History">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-title-icon">📊</span>
+          Sentiment History
+        </div>
+      </div>
+      <div class="history-body" id="history-body" role="log" aria-live="polite">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+  </aside>
+
+</main>
+
+<!-- ── Toast container ── -->
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

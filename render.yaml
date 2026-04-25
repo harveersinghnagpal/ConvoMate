@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: convomate-backend
+    env: python
+    region: oregon
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DEEPGRAM_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
+      - key: CONTEXT_BUFFER_SIZE
+        value: "8"
+      - key: MIN_TRANSCRIPT_LENGTH
+        value: "10"
