@@ -86,12 +86,20 @@ async def root() -> dict:
 
 @app.get("/dashboard-app.js", include_in_schema=False)
 async def dashboard_app_js() -> FileResponse:
-    return FileResponse(frontend_dir / "app.js", media_type="application/javascript")
+    return FileResponse(
+        frontend_dir / "app.js",
+        media_type="application/javascript",
+        headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"},
+    )
 
 
 @app.get("/dashboard-style.css", include_in_schema=False)
 async def dashboard_style_css() -> FileResponse:
-    return FileResponse(frontend_dir / "style.css", media_type="text/css")
+    return FileResponse(
+        frontend_dir / "style.css",
+        media_type="text/css",
+        headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"},
+    )
 
 
 # ── Dev runner ────────────────────────────────────────────────────────────────

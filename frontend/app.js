@@ -85,11 +85,7 @@ function getBackendBaseUrl() {
     return 'http://localhost:8000';
   }
 
-  const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-  const hostname = window.location.hostname || 'localhost';
-  const port = window.location.port || '8000';
-
-  return `${protocol}//${hostname}:${port}`;
+  return window.location.origin;
 }
 
 function getWebSocketUrl() {
